@@ -1,0 +1,353 @@
+/* src/components/MonthlyGrowthRecap.css */
+
+/* --- Reset & Global Styles --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* Define Accent Colors Here for JS Access */
+  --physical-accent: #FF4D4D; /* Red */
+  --economic-accent: #4CAF50; /* Green */
+  --emotional-accent: #FF69B4; /* Pink */
+  --mental-accent: #7B68EE; /* MediumSlateBlue */
+  --gratitude-accent: #FFD700; /* Gold */
+  --current-accent: var(--physical-accent); /* Default */
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+  /* Apply background to a wrapper div in React instead of body */
+  font-family: 'Space Grotesk', sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  /* Background will be applied to a container div */
+}
+
+/* Apply gradient to the main container in React */
+.recap-container {
+  background: linear-gradient(45deg, #050505, #121212, #050505);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}
+
+
+section {
+  min-height: 100vh;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Center items vertically */
+  /* justify-content: center; Let flex basis handle distribution */
+  padding: 4rem 2rem; /* Overall padding for the section */
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.6s ease;
+  z-index: 1;
+}
+
+/* --- Background Effects --- */
+section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background-size: cover;
+  background-position: center center; /* Added for better control */
+}
+section.in-view::before { opacity: 1; }
+section[data-type="physical"].in-view::before {
+  background: radial-gradient(circle at center, rgba(255, 77, 77, 0.15) 0%, rgba(255, 77, 77, 0.0) 60%);
+  animation: pulse 3s infinite ease-in-out;
+}
+section[data-type="economic"].in-view::before {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.0) 40%, rgba(76, 175, 80, 0.1) 70%, rgba(76, 175, 80, 0.0) 100%);
+  background-size: 200% 200%;
+  animation: flow 10s linear infinite;
+}
+section[data-type="emotional"].in-view::before {
+  background: radial-gradient(ellipse at 70% 30%, rgba(255, 105, 180, 0.12) 0%, rgba(255, 105, 180, 0.0) 70%);
+}
+section[data-type="mental"].in-view::before {
+   background-image:
+     linear-gradient(to right, rgba(123, 104, 238, 0.08) 1px, transparent 1px),
+     linear-gradient(to bottom, rgba(123, 104, 238, 0.08) 1px, transparent 1px);
+   background-size: 40px 40px;
+   animation: shimmer-dots 5s linear infinite alternate;
+}
+section[data-type="gratitude"].in-view::before {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.0) 55%);
+  transform: scale(1.5);
+}
+
+/* --- Layout Adjustments for Strict 30/70 Split --- */
+.slide-image-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%; /* Increased from original size */
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* This ensures image maintains aspect ratio */
+  opacity: 0.8; /* Slight transparency to blend with background */
+  transition: opacity 0.3s ease;
+  filter: drop-shadow(0 0 20px rgba(var(--current-accent-rgb), 0.3));
+}
+
+.slide-content {
+  position: relative;
+  z-index: 2;
+  width: 50%; /* Ensure content takes up left half */
+  padding-right: 2rem;
+}
+
+/* --- Image Styling --- */
+.slide-image img {
+  display: block;
+  width: 100%; /* Fill the wrapper width */
+  height: 100%; /* Fill the wrapper height */
+  max-height: 100%; /* Ensure it doesn't exceed wrapper height */
+  object-fit: contain; /* Scales down to fit, crucial for aspect ratio */
+  filter: grayscale(100%) brightness(0.7);
+  transform: scale(0.9) translateY(30px);
+  opacity: 0;
+  /* Base transition for initial load-in */
+  transition: filter 1.2s ease, opacity 1s ease, transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity, filter;
+}
+section.in-view .slide-image img {
+  filter: grayscale(0) brightness(1);
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+/* Parallax-specific styles for images */
+.slide-image img.parallax {
+    transition: filter 1.2s ease, opacity 1s ease; /* Remove transform from CSS transition */
+    /* JS sets transform directly for parallax */
+}
+
+
+/* --- Content Styling --- */
+h2 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  margin-bottom: 1.5rem;
+  /* padding-left: 2rem; Example: add padding here if needed */
+  background: linear-gradient(120deg, #fff, var(--current-accent), #fff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text; /* Added standard property */
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+  opacity: 0;
+  transform: translateZ(50px) translateY(40px);
+   /* Base transition for initial load-in */
+  transition: opacity 1s ease 0.2s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s;
+  will-change: transform, opacity, background-position; /* Added background-position */
+}
+section.in-view h2 {
+  opacity: 1;
+  transform: translateZ(0px) translateY(0);
+}
+
+/* Parallax-specific styles for h2 */
+h2.parallax {
+  transition: opacity 1s ease 0.2s; /* Remove transform from CSS transition */
+   /* JS sets transform directly for parallax */
+}
+
+.slide-summary {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  line-height: 1.7;
+  /* padding-left: 2rem; Example: add padding here if needed */
+  opacity: 0;
+  transform: translateY(40px);
+  /* Base transition for initial load-in */
+  transition: opacity 1.2s ease 0.4s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s;
+   will-change: transform, opacity;
+}
+section.in-view .slide-summary {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Parallax-specific styles for summary */
+.slide-summary.parallax {
+  transition: opacity 1.2s ease 0.4s; /* Remove transform from CSS transition */
+   /* JS sets transform directly for parallax */
+}
+
+.highlight {
+  color: var(--current-accent);
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--current-accent);
+  transition: color 0.6s ease, text-shadow 0.6s ease;
+}
+
+.stats-overlay {
+  order: -1;
+  margin-bottom: 2rem;
+  /* padding-left: 2rem; Example: add padding here if needed */
+  /* Add max-width to prevent it becoming too wide if slide-content is wide */
+  max-width: 90%; /* Adjust as needed */
+  background: rgba(255,255,255,0.05);
+  padding: 1.5rem 2rem; /* Re-add padding here, it's okay */
+  border-radius: 12px;
+  border: 1px solid var(--current-accent);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transform: translateY(30px);
+  /* Base transition for initial load-in */
+  transition: opacity 1s ease 0.6s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.6s, border-color 0.6s ease;
+   will-change: transform, opacity, border-color; /* Added border-color */
+}
+section.in-view .stats-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Parallax-specific styles for stats */
+.stats-overlay.parallax {
+  transition: opacity 1s ease 0.6s, border-color 0.6s ease; /* Remove transform from CSS transition */
+   /* JS sets transform directly for parallax */
+}
+
+.stat-item {
+  margin: 0.5rem 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+}
+.stat-value {
+  color: var(--current-accent);
+  font-weight: bold;
+   transition: color 0.6s ease;
+}
+
+/* --- Animations --- */
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.25; }
+    100% { transform: scale(1); opacity: 0.15; }
+}
+@keyframes flow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 200%; }
+}
+ @keyframes shimmer-dots {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  section {
+    flex-direction: column; /* Stack image and content vertically */
+    padding: 2rem 1rem;
+    min-height: 110vh; /* Ensure enough height */
+  }
+  .slide-image-wrapper {
+    width: 100%;
+    height: 50%;
+    opacity: 0.2; /* More transparent on mobile */
+  }
+
+  .slide-image img {
+      /* Ensure image respects container */
+      object-fit: contain; /* Already set, but good to confirm */
+      transform: scale(0.9) translateY(20px); /* Adjust mobile entry */
+  }
+   section.in-view .slide-image img {
+      transform: scale(1) translateY(0); /* Adjust mobile entry */
+   }
+
+  .slide-content {
+    width: 100%;
+    padding-right: 0;
+    flex-basis: auto;
+    max-width: 95%;
+    flex-grow: 1; /* Allow content to take remaining space */
+    text-align: center;
+    perspective: none;
+    padding: 1rem 0; /* Adjust padding */
+    align-items: center; /* Center content horizontally */
+  }
+  h2 {
+      text-align: center;
+      font-size: clamp(2rem, 8vw, 3rem);
+      padding-left: 0;
+      transform: translateZ(30px) translateY(30px); /* Adjust mobile entry */
+  }
+  section.in-view h2 {
+      transform: translateZ(0px) translateY(0); /* Adjust mobile entry */
+  }
+
+  .slide-summary {
+      text-align: center;
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      padding-left: 0;
+       transform: translateY(30px); /* Adjust mobile entry */
+  }
+   section.in-view .slide-summary {
+       transform: translateY(0); /* Adjust mobile entry */
+   }
+
+  .stats-overlay {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 1.5rem;
+    max-width: 90%; /* Ensure it doesn't stretch full width */
+    padding-left: 1.5rem; /* Reset example padding */
+    order: -1; /* Keep it above title on mobile */
+    transform: translateY(20px); /* Adjust mobile entry */
+   }
+    section.in-view .stats-overlay {
+       transform: translateY(0); /* Adjust mobile entry */
+   }
+
+  section::before {
+      /* Adjust background effects for mobile if needed */
+      background-size: contain; /* Example: might be too small */
+      /* background-size: cover; /* Keep cover potentially */
+      background-repeat: no-repeat;
+      background-position: center center; /* Ensure centered */
+  }
+  section[data-type="mental"].in-view::before {
+      background-size: 30px 30px; /* Adjust grid size */
+  }
+  section[data-type="gratitude"].in-view::before {
+      transform: scale(1.2); /* Adjust scale */
+  }
+}
+
+/* Small fix for smooth scroll */
+html.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Slight enhancement: add subtle transition to parallax transform for smoothness */
+/* Apply this ONLY if the direct JS update feels jerky. Start without it. */
+/*
+.parallax {
+   transition: transform 0.1s linear; /* EXPERIMENTAL - Might conflict slightly with JS timing */
+/*}
+*/

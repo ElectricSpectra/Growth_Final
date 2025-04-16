@@ -1,0 +1,422 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+
+  /* Growth Recap Color Scheme */
+  --physical-accent: #4F46E5;
+  --economic-accent: #10B981;
+  --emotional-accent: #8B5CF6;
+  --mental-accent: #F59E0B;
+  --gratitude-accent: #EC4899;
+  --current-accent: var(--physical-accent);
+}
+
+body {
+  background-color: #000000;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Glowing text effect */
+.glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+               0 0 20px rgba(255, 255, 255, 0.3),
+               0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.glow-sm {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+               0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Neon border effect */
+.neon-border {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2),
+              0 0 10px rgba(255, 255, 255, 0.1),
+              inset 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Custom scrollbar for session history */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Profile dropdown animation */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: slideUpFade 0.2s ease-out;
+}
+
+/* Chart styles */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* Monthly chart specific styles */
+[data-timeframe="month"] .chart-line {
+  stroke-width: 0.8;
+  opacity: 0.8;
+}
+
+[data-timeframe="month"] .chart-line:hover {
+  stroke-width: 2;
+  opacity: 1;
+}
+
+/* Score animation */
+@keyframes scoreUpdate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.score-update {
+  animation: scoreUpdate 0.3s ease-out;
+}
+
+/* Chart animations */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Chart hover effects */
+.chart-point:hover {
+  r: 6;
+  filter: brightness(1.3);
+}
+
+.chart-line:hover {
+  stroke-width: 3;
+  filter: brightness(1.3);
+}
+
+/* Flame animations */
+@keyframes flameCore {
+  0%, 100% { 
+    transform: translate(-50%, 0) scaleX(1); 
+    filter: brightness(1);
+  }
+  50% { 
+    transform: translate(-50%, -20px) scaleX(0.8); 
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes ember {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes flame1 {
+  0%, 100% { 
+    transform: translate(-50%, 0) scale(1) skewX(0deg); 
+    filter: brightness(1);
+  }
+  50% { 
+    transform: translate(-60%, -30px) scale(1.2) skewX(5deg);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes flame2 {
+  0%, 100% { 
+    transform: translate(-50%, 0) scale(0.8) skewX(0deg); 
+  }
+  50% { 
+    transform: translate(-40%, -40px) scale(1.1) skewX(-5deg);
+  }
+}
+
+@keyframes flame3 {
+  0%, 100% { 
+    transform: translate(-50%, 0) scale(1.1) skewX(0deg);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: translate(-55%, -35px) scale(0.9) skewX(5deg);
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes flame4 {
+  0%, 100% { transform: translate(-50%, 0) scale(0.9); }
+  50% { transform: translate(-45%, -15px) scale(1.2); }
+}
+
+@keyframes flame5 {
+  0%, 100% { transform: translate(-50%, 0) scale(1); }
+  50% { transform: translate(-50%, -20px) scale(1.1); }
+}
+
+/* Flamometer container styles */
+.flamometer-container {
+  background: linear-gradient(180deg, 
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(10px);
+}
+
+/* Flamometer specific styles */
+.flamometer-canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Enhanced flame animations */
+@keyframes flameWobble {
+  0%, 100% {
+    transform: rotate(-1deg) scale(0.98);
+  }
+  50% {
+    transform: rotate(1deg) scale(1.02);
+  }
+}
+
+/* Glass effect enhancement */
+.glass-effect {
+  backdrop-filter: blur(8px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+/* Marker glow enhancement */
+.marker-glow {
+  transition: all 0.3s ease-out;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+/* Focus Timer styles */
+.focus-timer-btn {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.focus-timer-btn:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.focus-timer-btn:active {
+  transform: translateY(0);
+}
+
+/* Timer progress animation */
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.timer-active {
+  animation: timerPulse 2s ease-in-out infinite;
+}
+
+/* Focus Flow Enhancements */
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  border-radius: 50%;
+  animation: ripple 2s linear infinite;
+}
+
+/* Session history animations */
+.session-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.session-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Profile specific styles */
+.profile-stat-card {
+  transition: all 0.3s ease;
+}
+
+.profile-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+/* Profile hover effect */
+.profile-hover-glow:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+/* XP Bar animation */
+@keyframes xpFill {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.xp-bar-fill {
+  animation: xpFill 1.5s ease-out;
+}
+
+/* Achievement card hover effect */
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.achievement-card:hover::before {
+  opacity: 1;
+}
+
+/* Smooth scroll for parallax */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Growth Recap animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+/* Button interaction animations */
+@keyframes buttonPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-button-pop {
+  animation: buttonPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Ensure headings visibility and proper spacing */
+.rounded-xl h2 {
+  opacity: 1 !important;
+  visibility: visible !important;
+  margin-top: 0 !important; /* Reset top margin */
+  padding-top: 0 !important; /* Reset top padding */
+}
+
+/* Reset container spacing */
+.bg-black.rounded-xl {
+  margin-top: 0 !important;
+  padding-top: 0.5rem !important; /* Reduced from 1.5rem to 0.5rem */
+}

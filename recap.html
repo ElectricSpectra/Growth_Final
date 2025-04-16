@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monthly Growth Recap - Smooth Parallax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- Reset & Global Styles --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      /* Define Accent Colors Here for JS Access */
+      --physical-accent: #FF4D4D; /* Red */
+      --economic-accent: #4CAF50; /* Green */
+      --emotional-accent: #FF69B4; /* Pink */
+      --mental-accent: #7B68EE; /* MediumSlateBlue */
+      --gratitude-accent: #FFD700; /* Gold */
+      --current-accent: var(--physical-accent); /* Default */
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(45deg, #050505, #121212, #050505);
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    section {
+      min-height: 100vh;
+      height: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center; /* Center items vertically */
+      /* justify-content: center; Let flex basis handle distribution */
+      padding: 4rem 2rem; /* Overall padding for the section */
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.6s ease;
+      z-index: 1;
+    }
+
+    /* --- Background Effects (Unchanged) --- */
+    section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background-size: cover;
+    }
+    section.in-view::before { opacity: 1; }
+    section[data-type="physical"].in-view::before {
+      background: radial-gradient(circle at center, rgba(255, 77, 77, 0.15) 0%, rgba(255, 77, 77, 0.0) 60%);
+      animation: pulse 3s infinite ease-in-out;
+    }
+    section[data-type="economic"].in-view::before {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.0) 40%, rgba(76, 175, 80, 0.1) 70%, rgba(76, 175, 80, 0.0) 100%);
+      background-size: 200% 200%;
+      animation: flow 10s linear infinite;
+    }
+    section[data-type="emotional"].in-view::before {
+      background: radial-gradient(ellipse at 70% 30%, rgba(255, 105, 180, 0.12) 0%, rgba(255, 105, 180, 0.0) 70%);
+    }
+    section[data-type="mental"].in-view::before {
+       background-image:
+         linear-gradient(to right, rgba(123, 104, 238, 0.08) 1px, transparent 1px),
+         linear-gradient(to bottom, rgba(123, 104, 238, 0.08) 1px, transparent 1px);
+       background-size: 40px 40px;
+       animation: shimmer-dots 5s linear infinite alternate;
+    }
+    section[data-type="gratitude"].in-view::before {
+      background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.0) 55%);
+      transform: scale(1.5);
+    }
+
+    /* --- Layout Adjustments for Strict 30/70 Split --- */
+    .slide-image-wrapper {
+      /* Use flex shorthand: grow 0, shrink 0, basis 30% */
+      flex: 0 0 30%;
+      /* Remove internal padding affecting width calculation */
+      padding: 0;
+      height: 100%; /* Try to match section height */
+      max-height: 70vh; /* Constraint */
+      display: flex; /* Still use flex to center the image */
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+      will-change: transform;
+      /* Add right margin for spacing instead of padding inside wrapper */
+      margin-right: 4%; /* Adjust this % for desired gap */
+    }
+
+    .slide-content {
+      /* Explicitly set basis to remaining space, accounting for margin */
+      /* Grow 1, Shrink 1, Basis auto (will fill remaining) OR Basis 66% (100% - 30% - 4% margin) */
+      flex: 1 1 auto; /* More flexible */
+      /* Or be more rigid: flex: 0 0 66%; */
+
+      /* Remove internal padding affecting width calculation */
+      padding: 0;
+      min-height: 80%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      will-change: transform;
+      perspective: 1000px;
+      /* Padding can be added to inner elements if needed, or keep content flush */
+    }
+
+    /* --- Image Styling (Mostly Unchanged) --- */
+    .slide-image img {
+      display: block;
+      width: 100%; /* Fill the wrapper width */
+      height: 100%; /* Fill the wrapper height */
+      max-height: 100%; /* Ensure it doesn't exceed wrapper height */
+      object-fit: contain; /* Scales down to fit */
+      filter: grayscale(100%) brightness(0.7);
+      transform: scale(0.9) translateY(30px);
+      opacity: 0;
+      transition: filter 1.2s ease, opacity 1s ease, transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform, opacity, filter;
+    }
+    section.in-view .slide-image img {
+      filter: grayscale(0) brightness(1);
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    .slide-image img.parallax {
+        transition: filter 1.2s ease, opacity 1s ease;
+        /* JS sets transform */
+    }
+
+
+    /* --- Content Styling (Adjust padding location) --- */
+
+    /* Add padding to the elements *inside* .slide-content if needed */
+    /* Or adjust .slide-content padding directly if flex calculation is stable */
+     .slide-content {
+         padding: 2rem 0; /* Example: Only vertical padding on the container */
+         /* Horizontal padding might be needed on specific elements like h2, p */
+     }
+
+
+    h2 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      margin-bottom: 1.5rem;
+      /* padding-left: 2rem; Example: add padding here if needed */
+      background: linear-gradient(120deg, #fff, var(--current-accent), #fff);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s linear infinite;
+      opacity: 0;
+      transform: translateZ(50px) translateY(40px);
+      transition: opacity 1s ease 0.2s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s;
+      will-change: transform, opacity;
+    }
+    section.in-view h2 {
+      opacity: 1;
+      transform: translateZ(0px) translateY(0);
+    }
+    h2.parallax {
+      transition: opacity 1s ease 0.2s;
+       /* JS sets transform */
+    }
+
+    .slide-summary {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      line-height: 1.7;
+      /* padding-left: 2rem; Example: add padding here if needed */
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.2s ease 0.4s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s;
+       will-change: transform, opacity;
+    }
+    section.in-view .slide-summary {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .slide-summary.parallax {
+      transition: opacity 1.2s ease 0.4s;
+       /* JS sets transform */
+    }
+
+    .highlight {
+      color: var(--current-accent);
+      font-weight: 600;
+      text-shadow: 0 0 8px var(--current-accent);
+      transition: color 0.6s ease, text-shadow 0.6s ease;
+    }
+
+    .stats-overlay {
+      order: -1;
+      margin-bottom: 2rem;
+      /* padding-left: 2rem; Example: add padding here if needed */
+      /* Add max-width to prevent it becoming too wide if slide-content is wide */
+      max-width: 90%; /* Adjust as needed */
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem 2rem; /* Re-add padding here, it's okay */
+      border-radius: 12px;
+      border: 1px solid var(--current-accent);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease 0.6s, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) 0.6s, border-color 0.6s ease;
+       will-change: transform, opacity;
+    }
+    section.in-view .stats-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stats-overlay.parallax {
+      transition: opacity 1s ease 0.6s, border-color 0.6s ease;
+       /* JS sets transform */
+    }
+
+    .stat-item {
+      margin: 0.5rem 0;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+    .stat-value {
+      color: var(--current-accent);
+      font-weight: bold;
+       transition: color 0.6s ease;
+    }
+
+    /* --- Animations (Unchanged) --- */
+    @keyframes shimmer { /* ... */ }
+    @keyframes gradientBG { /* ... */ }
+    @keyframes pulse { /* ... */ }
+    @keyframes flow { /* ... */ }
+    @keyframes shimmer-dots { /* ... */ }
+    @keyframes shimmer {
+      0% { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.15; }
+        50% { transform: scale(1.1); opacity: 0.25; }
+        100% { transform: scale(1); opacity: 0.15; }
+    }
+    @keyframes flow {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 200% 200%; }
+    }
+     @keyframes shimmer-dots {
+        0% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 768px) {
+      section {
+        flex-direction: column; /* Stack image and content vertically */
+        padding: 2rem 1rem;
+        min-height: 110vh;
+      }
+      .slide-image-wrapper {
+         /* Reset flex basis and margin for column layout */
+        flex-basis: auto;
+        width: 100%;
+        max-height: 45vh;
+        min-height: 35vh;
+        margin-right: 0; /* Remove right margin */
+        margin-bottom: 1rem; /* Add bottom margin */
+        padding: 0.5rem; /* Can add some padding back on mobile */
+      }
+      .slide-content {
+        /* Reset flex basis for column layout */
+        flex-basis: auto;
+        width: 100%;
+        max-width: 95%;
+        flex-grow: 1; /* Allow content to take remaining space */
+        text-align: center;
+        perspective: none;
+        padding: 1rem; /* Add padding back */
+      }
+      h2 { text-align: center; font-size: clamp(2rem, 8vw, 3rem); padding-left: 0; }
+      .slide-summary { text-align: center; font-size: clamp(1rem, 4vw, 1.2rem); padding-left: 0; }
+      .stats-overlay {
+        margin-left: auto;
+        margin-right: auto;
+        padding: 1rem 1.5rem;
+        max-width: 90%; /* Ensure it doesn't stretch full width */
+        padding-left: 1.5rem; /* Reset example padding */
+       }
+      section::before {
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+      section[data-type="mental"].in-view::before {
+          background-size: 25px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sections (HTML unchanged) -->
+   <section data-type="physical">
+    <div class="slide-image-wrapper">
+      <img src="/assets/recap_phy.png" alt="Physical Growth" class="slide-image parallax" data-parallax-factor="-0.15">
+    </div>
+    <div class="slide-content">
+      <div class="stats-overlay parallax" data-parallax-factor="0.05">
+        <div class="stat-item">Workouts Completed: <span class="stat-value">20</span></div>
+        <div class="stat-item">Distance Run: <span class="stat-value">50km</span></div>
+        <div class="stat-item">Consistency Rate: <span class="stat-value">95%</span></div>
+      </div>
+      <h2 class="parallax" data-parallax-factor="0.1">Physical Growth</h2>
+      <p class="slide-summary parallax" data-parallax-factor="0.03">You completed <span class="highlight">20 morning workouts</span> and ran <span class="highlight">50km</span> this month.<br>Your consistency and endurance are on fire!</p>
+    </div>
+  </section>
+
+  <section data-type="economic">
+    <div class="slide-image-wrapper">
+      <img src="/assets/recap.eco.png" alt="Economic Growth" class="slide-image parallax" data-parallax-factor="-0.15">
+    </div>
+    <div class="slide-content">
+      <div class="stats-overlay parallax" data-parallax-factor="0.05">
+        <div class="stat-item">Savings: <span class="stat-value">₹8,000</span></div>
+        <div class="stat-item">Extra Income: <span class="stat-value">₹5,000</span></div>
+        <div class="stat-item">Budget Adherence: <span class="stat-value">92%</span></div>
+      </div>
+      <h2 class="parallax" data-parallax-factor="0.1">Economic Growth</h2>
+      <p class="slide-summary parallax" data-parallax-factor="0.03">You saved <span class="highlight">₹8,000</span> and earned an extra <span class="highlight">₹5,000</span> from freelancing.<br>Your budgeting and side hustle game is strong.</p>
+    </div>
+  </section>
+
+  <section data-type="emotional">
+    <div class="slide-image-wrapper">
+       <img src="/assets/prayer_pose_nobg.png" alt="Emotional Growth" class="slide-image parallax" data-parallax-factor="-0.15">
+    </div>
+    <div class="slide-content">
+      <div class="stats-overlay parallax" data-parallax-factor="0.05">
+        <div class="stat-item">Journal Entries: <span class="stat-value">28</span></div>
+        <div class="stat-item">Meditation Minutes: <span class="stat-value">420</span></div>
+        <div class="stat-item">Emotional Balance: <span class="stat-value">85%</span></div>
+      </div>
+       <h2 class="parallax" data-parallax-factor="0.1">Emotional Growth</h2>
+       <p class="slide-summary parallax" data-parallax-factor="0.03">You <span class="highlight">journaled consistently</span> and stayed calm during tough conversations.<br>Emotional mastery is showing.</p>
+    </div>
+  </section>
+
+  <section data-type="mental">
+    <div class="slide-image-wrapper">
+       <img src="/assets/recap.men.png" alt="Mental Growth" class="slide-image parallax" data-parallax-factor="-0.15">
+    </div>
+    <div class="slide-content">
+       <div class="stats-overlay parallax" data-parallax-factor="0.05">
+          <div class="stat-item">Books Read: <span class="stat-value">3</span></div>
+          <div class="stat-item">Study Hours: <span class="stat-value">45</span></div>
+          <div class="stat-item">Focus Score: <span class="stat-value">88%</span></div>
+       </div>
+       <h2 class="parallax" data-parallax-factor="0.1">Mental Growth</h2>
+       <p class="slide-summary parallax" data-parallax-factor="0.03">You finished <span class="highlight">3 books</span> and learned the basics of <span class="highlight">Python</span>.<br>Deep focus and learning have been your strength.</p>
+    </div>
+  </section>
+
+  <section data-type="gratitude">
+    <div class="slide-image-wrapper">
+       <img src="/assets/happy.png" alt="Gratitude Moment" class="slide-image parallax" data-parallax-factor="-0.15">
+    </div>
+    <div class="slide-content">
+       <div class="stats-overlay parallax" data-parallax-factor="0.05">
+          <div class="stat-item">Acts of Kindness: <span class="stat-value">12</span></div>
+          <div class="stat-item">Thank You Notes: <span class="stat-value">8</span></div>
+          <div class="stat-item">Gratitude Score: <span class="stat-value">98%</span></div>
+       </div>
+       <h2 class="parallax" data-parallax-factor="0.1">Gratitude Moment</h2>
+       <p class="slide-summary parallax" data-parallax-factor="0.03">You surprised your <span class="highlight">parents with a dinner</span> and messaged your <span class="highlight">mentor</span>.<br>You embraced gratitude wholeheartedly.</p>
+    </div>
+  </section>
+
+  <script>
+    // --- JS remains the same ---
+    const sections = document.querySelectorAll('section');
+    const parallaxElements = document.querySelectorAll('.parallax');
+    const root = document.documentElement;
+    const viewportHeight = window.innerHeight;
+
+    const colorSchemes = {
+      physical: getComputedStyle(root).getPropertyValue('--physical-accent').trim(),
+      economic: getComputedStyle(root).getPropertyValue('--economic-accent').trim(),
+      emotional: getComputedStyle(root).getPropertyValue('--emotional-accent').trim(),
+      mental: getComputedStyle(root).getPropertyValue('--mental-accent').trim(),
+      gratitude: getComputedStyle(root).getPropertyValue('--gratitude-accent').trim()
+    };
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const section = entry.target;
+        if (entry.isIntersecting) {
+          const type = section.dataset.type;
+          root.style.setProperty('--current-accent', colorSchemes[type]);
+          section.classList.add('in-view');
+        } else {
+          section.classList.remove('in-view');
+        }
+      });
+    }, {
+         rootMargin: '-40% 0px -40% 0px',
+         threshold: 0
+        });
+
+    sections.forEach(section => observer.observe(section));
+
+    let ticking = false;
+
+    function applyParallax() {
+      const scrollY = window.scrollY;
+
+      parallaxElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const elCenter = rect.top + rect.height / 2;
+        const viewportCenter = viewportHeight / 2;
+        const distance = elCenter - viewportCenter;
+        const factor = parseFloat(el.dataset.parallaxFactor) || 0;
+        const translateY = distance * factor;
+
+        // Apply only translateY for parallax scroll effect
+        el.style.transform = `translateY(${translateY.toFixed(2)}px)`;
+
+      });
+
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(applyParallax);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('load', () => {
+        requestAnimationFrame(applyParallax);
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growth</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@500&family=Playfair+Display:ital@1&family=VT323&display=swap');
+
+    body {
+      background-color: #000000;
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .glow {
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.7),
+                   0 0 25px rgba(255, 255, 255, 0.4),
+                   0 0 35px rgba(255, 255, 255, 0.2);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      opacity: 0;
+    }
+
+    .active {
+      opacity: 1 !important;
+      z-index: 0;
+    }
+
+    .quote-row {
+      position: absolute;
+      width: 200vw;
+      display: flex;
+      white-space: nowrap;
+      animation: scrollRow 60s linear infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes scrollRow {
+      0% { transform: translateX(-100vw); }
+      100% { transform: translateX(0); }
+    }
+
+    .quote {
+      margin-right: 4rem;
+      font-weight: bold;
+      text-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff;
+      color: #ffffff;
+    }
+
+    .banner {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Motivational Quotes Background -->
+  <div id="quotes-background" class="absolute top-0 left-0 w-full h-full z-[-2]">
+  </div>
+
+  <!-- Slideshow on top of quotes -->
+  <div id="slideshow" class="absolute top-0 left-0 w-full h-full z-[-1]">
+    <img class="slide active" src="/assets/physical_nobg.png" alt="Physical" />
+    <img class="slide" src="/assets/mental_nobg.png" alt="Mental" />
+    <img class="slide" src="/assets/emotional_nobg.png" alt="Emotional" />
+    <img class="slide" src="/assets/gratitude_nobg.png" alt="Gratitude" />
+    <img class="slide" src="/assets/economic_nobg.png" alt="Economic Growth" />
+    <img class="slide" src="/assets/spiritual_nobg.png" alt="Spiritual Growth" />
+    <img class="slide" src="/assets/success_no_background.png" alt="Success" />
+  </div>
+
+  <!-- Centered Title & Button -->
+  <div class="absolute left-1/2 transform -translate-x-1/2 z-10 text-center" style="top: 70vh;">
+    <div class="banner">
+      <h1 class="text-6xl font-bold glow text-center mb-6">GROWTH</h1>
+    </div>
+    <div class="flex justify-center mt-4">
+      <a href="/app" class="px-8 py-4 text-lg font-bold rounded-md glow text-black bg-white hover:bg-gray-300 transition cursor-pointer">
+        GROW NOW!
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function showNextSlide() {
+      slides.forEach(slide => slide.classList.remove('active'));
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+
+      const isSuccessSlide = slides[currentSlide].getAttribute('alt') === 'Success';
+      const nextDelay = isSuccessSlide ? 2000 : 1000;
+      setTimeout(showNextSlide, nextDelay);
+    }
+
+    setTimeout(showNextSlide, 500);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fonts = ['Roboto', 'Playfair Display', 'VT323', 'Orbitron'];
+      const quotes = [
+        "Believe in the process.", "Push past the limits.", "Every day is progress.", "Discipline defines destiny.",
+        "Grow through what you go through.", "Never stop evolving.", "Dreams demand hustle.", "Consistency is key.",
+        "Embrace the grind.", "Success loves effort.", "Fall. Rise. Repeat.", "Pain makes you stronger.",
+        "Growth is not optional.", "The only way is forward.", "Fuel the fire within.", "You are your limit.",
+        "Make every second count.", "Progress over perfection.", "Power through doubt.", "Fear is a liar.",
+        "Grind. Hustle. Grow.", "Nothing changes if nothing changes.", "Evolve relentlessly.", "Your time is now.",
+        "Stay hungry. Stay focused.", "Sweat builds character.", "Prove yourself right.", "Keep showing up.",
+        "Champions are made in the dark.", "Push the boundaries.", "Work in silence.", "Master your mind.",
+        "No pain, no gain.", "Thrive under pressure.", "Your pace, your race.", "Create, don't wait.",
+        "Effort earns respect.", "Live the challenge.", "Dig deeper.", "Defy the odds.",
+        "Relentless ambition.", "Stay disciplined.", "Get better daily.", "Do the hard things.",
+        "Keep climbing.", "Don't break, break through.", "Crush comfort zones.", "Hustle with heart.",
+        "Level up your life.", "Build. Break. Become."
+      ];
+
+      const container = document.getElementById("quotes-background");
+
+      for (let row = 0; row < 15; row++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'quote-row';
+        rowDiv.style.top = `${(row * 6)}vh`;
+        rowDiv.style.animationDuration = `${45 + Math.random() * 30}s`;
+
+        for (let q = 0; q < 15; q++) {
+          const quoteText = quotes[(row * 5 + q) % quotes.length];
+          const font = fonts[(row + q) % fonts.length];
+          const quoteSpan = document.createElement('span');
+          quoteSpan.className = 'quote';
+          quoteSpan.style.fontFamily = `'${font}', sans-serif`;
+          quoteSpan.style.fontSize = `${0.8 + Math.random() * 0.6}rem`;
+          quoteSpan.style.opacity = `${0.7 + Math.random() * 0.2}`;
+          quoteSpan.innerText = `"${quoteText}"`;
+          rowDiv.appendChild(quoteSpan);
+        }
+        container.appendChild(rowDiv);
+      }
+    });
+  </script>
+</body>
+
+</html>
